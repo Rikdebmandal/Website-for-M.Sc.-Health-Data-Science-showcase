@@ -1,661 +1,149 @@
-<!DOCTYPE html>
+﻿<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rikdeb Mandal — Data Analyst & Health Data Science Professional</title>
-  <meta name="description" content="Portfolio of Rikdeb Mandal — Health Data Science postgraduate specializing in Predictive Analytics, Machine Learning, Explainable AI (XAI), and Healthcare Data Pipelines.">
-  
-  <!-- Google Fonts: Plus Jakarta Sans & Syne -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
-  
-  <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>School of Public Health — M.Sc. Health Data Science • Student Talent Showcase (Batch 2025–2027)</title>
+  <link rel="stylesheet" href="site-style.css">
 </head>
 <body>
-  <!-- Loading Screen -->
-  <div id="loader" class="loader-container">
-    <div class="loader-content">
-      <div class="spinner"></div>
-      <div class="loader-text">INITIALIZING DATA INTELLIGENCE</div>
-      <div id="loader-progress" class="loader-progress">0%</div>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <img src="assets/brochure_extract/page_1_img_1.png" alt="School of Public Health - SRM Logo" class="logo" />
+        <div class="titles">
+          <h1>SCHOOL OF PUBLIC HEALTH</h1>
+          <h2>SRM Institute of Science and Technology</h2>
+          <h3>M.Sc. Health Data Science — Student Talent Showcase</h3>
+          <p class="muted">Batch 2025–2027</p>
+        </div>
+      </div>
+      <nav class="main-nav">
+        <a href="#students">Explore Students</a>
+        <a href="#projects">Explore Projects</a>
+        <a href="#skills">Skills Map</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-text">
+          <h1>Student Talent Showcase — M.Sc. Health Data Science</h1>
+          <p class="lead">The MSc Health Data Science programme at SRM prepares graduates at the intersection of healthcare, data, statistics, and technology, with a strong emphasis on learning through real-world application.</p>
+          <p class="muted">Graduates develop proficiency in Python, R, SQL, machine learning, deep learning, Power BI, Tableau, large language models, dashboard development, Electronic Medical Records (EMR), Hospital Information Systems (HIS), and healthcare data analytics.</p>
+          <div class="cta-row">
+            <a class="btn" href="#students">Explore Students</a>
+            <a class="btn ghost" href="#projects">Explore Projects</a>
+          </div>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="data-grid"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="container about">
+      <h2>About the Programme</h2>
+      <p>The programme emphasises practical and experiential learning, hands-on work with real-world healthcare data, research methodology, and structured industry exposure. Students learn data management, analysis, interpretation, visualization, and evidence-based decision-making relevant to healthcare and allied sectors.</p>
+      <div class="tech-pillars">
+        <span>Python</span><span>R</span><span>SQL</span><span>Machine Learning</span><span>Deep Learning</span>
+        <span>Power BI</span><span>Tableau</span><span>LLMs</span><span>EMR</span><span>HIS</span><span>Healthcare Analytics</span>
+      </div>
+    </section>
+
+    <section id="students" class="container students">
+      <div class="section-header">
+        <h2>Student Directory</h2>
+        <div class="controls">
+          <input id="search" placeholder="Search students, skills, projects, companies..." />
+          <select id="filter-select">
+            <option value="all">All</option>
+          </select>
+        </div>
+      </div>
+      <div id="student-grid" class="grid" aria-live="polite"></div>
+    </section>
+
+    <section id="projects" class="container projects">
+      <h2>Project Showcase</h2>
+      <div id="project-filters" class="controls small">
+        <input id="project-search" placeholder="Search projects..." />
+        <select id="project-type-filter">
+          <option value="all">All</option>
+          <option value="academic">Academic</option>
+          <option value="industry">Industry</option>
+        </select>
+      </div>
+      <div id="project-grid" class="grid"></div>
+      <div id="project-pagination" class="pagination" aria-label="Project pagination">
+        <button id="proj-prev" class="btn-small" aria-label="Previous page">&lt;</button>
+        <div id="proj-page-info" class="page-info">0 | 0</div>
+        <button id="proj-next" class="btn-small" aria-label="Next page">&gt;</button>
+      </div>
+    </section>
+
+    <section id="skills" class="container skills">
+      <h2>Skills / Talent Map</h2>
+      <div id="skills-map" class="skills-map"></div>
+    </section>
+
+    <section id="industry" class="container industry">
+      <h2>Industry Experience</h2>
+      <div id="industry-list" class="industry-list"></div>
+    </section>
+
+    <section id="recruit" class="container recruit">
+      <h2>Find the Right Talent</h2>
+      <p>Use technical skills, healthcare domain interests, industry experience, project types and AI/ML indicators to quickly discover relevant students.</p>
+      <div class="controls">
+        <input id="recruit-search" placeholder="Example: Python + Machine Learning + Healthcare" />
+        <button id="recruit-search-btn" class="btn">Search</button>
+      </div>
+      <div id="recruit-results" class="grid"></div>
+    </section>
+
+    <section id="contact" class="container contact">
+      <h2>Contact / Institution</h2>
+      <address>
+        School of Public Health<br />
+        SRM Institute of Science and Technology<br />
+        Kattankulathur, Chengalpattu – 603203
+      </address>
+      <p>Placement contact:<br />Dr Prakash M — Associate Professor and In-charge Student Placement<br />Email: Prakashm6@srmist.edu.in</p>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <small>SRM Institute of Science and Technology — School of Public Health • M.Sc. Health Data Science • Batch 2025–2027</small>
+    </div>
+  </footer>
+
+  <!-- Creator credit (fixed bottom-right) -->
+  <div class="created-by" aria-hidden="false">
+    <span>Created by&nbsp;</span><a href="https://github.com/Rikdebmandal" target="_blank" rel="noopener">Rikdeb Mandal</a>
+  </div>
+
+  <!-- Profile Modal -->
+  <div id="profile-modal" class="modal" role="dialog" aria-hidden="true">
+    <div class="modal-content">
+      <button id="modal-close" class="modal-close" aria-label="Close">×</button>
+      <div id="modal-body"></div>
     </div>
   </div>
 
-  <!-- Pinned Canvas for Continuous Scroll Animation -->
-  <canvas id="animation-canvas"></canvas>
-
-  <!-- Ambient Lighting & Vignette Overlay -->
-  <div class="ambient-overlay"></div>
-
-  <!-- Main Website Content -->
-  <div class="page-wrapper">
-    
-    <!-- Floating Glass Header -->
-    <header class="site-header">
-      <div class="nav-container">
-        <a href="#hero" class="brand-logo">
-          <span>RIKDEB</span><span class="accent-dot">.</span>
-        </a>
-
-        <nav class="nav-links">
-          <a href="#about" class="nav-link">About</a>
-          <a href="#experience" class="nav-link">Experience</a>
-          <a href="#projects" class="nav-link">Projects</a>
-          <a href="#skills" class="nav-link">Skills</a>
-          <a href="#education" class="nav-link">Education</a>
-          <a href="#contact" class="nav-link">Contact</a>
-        </nav>
-
-        <a href="#contact" class="btn btn-primary btn-nav">
-          <span>Get in touch</span>
-          <svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="7" y1="17" x2="17" y2="7"></line>
-            <polyline points="7 7 17 7 17 17"></polyline>
-          </svg>
-        </a>
-
-        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle Navigation">
-          <span></span>
-          <span></span>
-        </button>
-      </div>
-    </header>
-
-    <!-- Mobile Navigation Drawer -->
-    <div class="mobile-nav-drawer" id="mobileDrawer">
-      <a href="#about" class="mobile-nav-link">About</a>
-      <a href="#experience" class="mobile-nav-link">Experience</a>
-      <a href="#projects" class="mobile-nav-link">Projects</a>
-      <a href="#skills" class="mobile-nav-link">Skills</a>
-      <a href="#education" class="mobile-nav-link">Education</a>
-      <a href="#contact" class="mobile-nav-link">Contact</a>
-      <a href="#contact" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 20px;">
-        <span>Get in touch</span>
-      </a>
+  <!-- Intern Details Modal -->
+  <div id="intern-modal" class="modal" role="dialog" aria-hidden="true">
+    <div class="modal-content">
+      <button id="intern-modal-close" class="modal-close" aria-label="Close">×</button>
+      <div id="intern-modal-body"></div>
     </div>
-
-    <!-- 01. Hero Section -->
-    <section id="hero" class="section hero-section">
-      <div class="container hero-container">
-        
-        <div class="hero-top-badge">
-          <span class="badge-pulse"></span>
-          <span>Data Analyst & Health Data Science Professional</span>
-        </div>
-
-        <div class="hero-main-content">
-          <div class="hero-left">
-            <span class="hero-greeting">Hey, I'm</span>
-            <h1 class="hero-title">
-              Rikdeb<br>
-              <span class="text-gradient">Mandal</span>
-            </h1>
-          </div>
-
-          <div class="hero-right">
-            <div class="quote-card glass-card">
-              <h2 class="quote-title">Transforming Complex Data into Life-Saving Intelligence.</h2>
-              <p class="quote-desc">
-                Health Data Science postgraduate with hands-on experience in predictive analytics, machine learning, and clinical data pipelines. Delivering production ML models that bridge data and decision-making.
-              </p>
-              <div class="hero-cta-group">
-                <a href="#projects" class="btn btn-secondary">
-                  <span>Explore Projects</span>
-                </a>
-                <a href="#contact" class="btn btn-glow">
-                  <span>Connect with Me</span>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Numbered Highlights -->
-        <div class="hero-highlights-grid">
-          <div class="highlight-item glass-pill">
-            <span class="highlight-num">#01</span>
-            <span class="highlight-label">Health Data Science</span>
-          </div>
-          <div class="highlight-item glass-pill">
-            <span class="highlight-num">#02</span>
-            <span class="highlight-label">Predictive ML & XAI</span>
-          </div>
-          <div class="highlight-item glass-pill">
-            <span class="highlight-num">#03</span>
-            <span class="highlight-label">Time-Series Forecasting</span>
-          </div>
-          <div class="highlight-item glass-pill">
-            <span class="highlight-num">#04</span>
-            <span class="highlight-label">Geospatial GIS & AI</span>
-          </div>
-        </div>
-
-        <!-- Scroll prompt -->
-        <div class="scroll-prompt">
-          <span class="scroll-text">Scroll to explore profile</span>
-          <div class="scroll-indicator-bar">
-            <div class="scroll-dot"></div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- 02. Tech & Competencies Marquee -->
-    <section class="section brands-section">
-      <div class="brands-wrapper">
-        <span class="brands-label">Core Technical Stack & Data Ecosystem</span>
-        <div class="marquee-track">
-          <div class="marquee-content">
-            <span class="brand-item"><svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> Python (Pandas, NumPy, Scikit-learn)</span>
-            <span class="brand-item"><svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg> TensorFlow</span>
-            <span class="brand-item"><svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg> SQL & Relational Databases</span>
-            <span class="brand-item"><svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg> Explainable AI (XAI)</span>
-            <span class="brand-item"><svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Time-Series Forecasting</span>
-            <span class="brand-item"><svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg> Geospatial GIS (QGIS, ArcGIS)</span>
-            <span class="brand-item"><svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg> Local LLMs & Agents (Ollama)</span>
-          </div>
-          <div class="marquee-content" aria-hidden="true">
-            <span class="brand-item"><svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> Python (Pandas, NumPy, Scikit-learn)</span>
-            <span class="brand-item"><svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg> TensorFlow</span>
-            <span class="brand-item"><svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg> SQL & Relational Databases</span>
-            <span class="brand-item"><svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg> Explainable AI (XAI)</span>
-            <span class="brand-item"><svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Time-Series Forecasting</span>
-            <span class="brand-item"><svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg> Geospatial GIS (QGIS, ArcGIS)</span>
-            <span class="brand-item"><svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg> Local LLMs & Agents (Ollama)</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 03. About & Professional Profile -->
-    <section id="about" class="section about-section">
-      <div class="container">
-        
-        <div class="about-header-grid">
-          <div class="about-title-col">
-            <span class="section-tag">Professional Summary</span>
-            <h2 class="section-heading">
-              Engineering Predictive Models for Real-World Healthcare & Industry
-            </h2>
-          </div>
-
-          <div class="about-desc-col">
-            <p class="lead-text">
-              Health Data Science postgraduate with hands-on experience in predictive analytics, machine learning, and healthcare data pipelines. Delivered production-ready ML solutions during a 5-month internship at Orbiton Life Sciences, including a deployed expiry-date prediction API and demand-forecasting models achieving 85%+ accuracy.
-            </p>
-            <p class="lead-text" style="font-size: 15px; margin-top: -10px;">
-              Skilled in Python, statistical modeling, and big data technologies, with a growing focus on Explainable AI (XAI) for clinical applications and geospatial predictive modeling. Seeking a Data Analyst or Health Data Science role to apply predictive modeling to real-world healthcare and business problems.
-            </p>
-            <div class="about-cta-row">
-              <span class="cta-subtext">Location: Paschim Medinipur, West Bengal, India</span>
-              <a href="#contact" class="btn btn-primary">
-                <span>Contact Rikdeb</span>
-                <svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Metrics & Stats from Resume -->
-        <div class="stats-grid">
-          <div class="stat-card glass-card">
-            <span class="stat-value">85%+</span>
-            <span class="stat-label">Forecasting Accuracy</span>
-            <p class="stat-sub">Achieved in pharmaceutical inventory demand prediction at Orbiton.</p>
-          </div>
-          <div class="stat-card glass-card">
-            <span class="stat-value">5 Mo.</span>
-            <span class="stat-label">Production Experience</span>
-            <p class="stat-sub">Internship deploying live ML APIs and ERP data pipelines.</p>
-          </div>
-          <div class="stat-card glass-card">
-            <span class="stat-value">7.68</span>
-            <span class="stat-label">M.Sc. CGPA</span>
-            <p class="stat-sub">Health Data Science at SRM Institute of Science & Technology.</p>
-          </div>
-          <div class="stat-card glass-card">
-            <span class="stat-value">3+</span>
-            <span class="stat-label">Flagship AI Systems</span>
-            <p class="stat-sub">Explainable Deep Learning, GIS Mapping, and Local AI Agents.</p>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- 04. Professional Experience -->
-    <section id="experience" class="section experience-section">
-      <div class="container">
-        
-        <div class="section-top-row">
-          <div>
-            <span class="section-tag">Work History</span>
-            <h2 class="section-heading">Professional Experience</h2>
-          </div>
-        </div>
-
-        <div class="experience-card glass-card">
-          <div class="exp-header">
-            <div class="exp-role-box">
-              <span class="exp-badge">INTERNSHIP</span>
-              <h3 class="exp-role">Data Analytics Intern</h3>
-              <h4 class="exp-company">Orbiton Life Sciences Pvt. Ltd. — Chennai, India</h4>
-            </div>
-            <div class="exp-date">
-              <span>Mar 2026 – Jul 2026 (5 Months)</span>
-            </div>
-          </div>
-
-          <div class="exp-body">
-            <ul class="exp-bullet-list">
-              <li>
-                <strong>Supply Chain Optimization:</strong> Developed predictive models for inventory optimization and stock-level forecasting, improving supply chain efficiency across pharmaceutical operations.
-              </li>
-              <li>
-                <strong>Production ML API:</strong> Built and deployed a machine learning–based expiry-date prediction API, reducing product waste and strengthening regulatory compliance.
-              </li>
-              <li>
-                <strong>Time-Series & Regression:</strong> Applied time-series forecasting and regression techniques to predict inventory needs with <strong>85%+ accuracy</strong>, cutting stockouts and overstock incidents.
-              </li>
-              <li>
-                <strong>ERP & Data Workflows:</strong> Collaborated with cross-functional teams on ERP implementation, streamlining data workflows and reporting processes.
-              </li>
-            </ul>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- 05. Key Projects Showcase -->
-    <section id="projects" class="section projects-section">
-      <div class="container">
-        
-        <div class="section-top-row">
-          <div>
-            <span class="section-tag">Applied Machine Learning</span>
-            <h2 class="section-heading">Key Projects</h2>
-          </div>
-          
-          <div class="project-filters">
-            <button class="filter-btn active" data-filter="all">All</button>
-            <button class="filter-btn" data-filter="health">Healthcare AI</button>
-            <button class="filter-btn" data-filter="geospatial">Geospatial ML</button>
-            <button class="filter-btn" data-filter="systems">AI Systems & Agents</button>
-          </div>
-        </div>
-
-        <div class="projects-grid">
-          
-          <!-- Project 1: Brain Tumor Detection -->
-          <div class="project-card glass-card" data-category="health">
-            <div class="project-media-wrapper">
-              <div class="project-visual visual-audio">
-                <div class="visual-art">
-                  <svg viewBox="0 0 100 100" class="art-svg">
-                    <circle cx="50" cy="50" r="35" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
-                    <path d="M35,35 Q50,20 65,35 Q80,50 65,65 Q50,80 35,65 Q20,50 35,35 Z" fill="none" stroke="#ff3366" stroke-width="2.5"/>
-                    <circle cx="58" cy="42" r="6" fill="#ff6b3d"/>
-                    <line x1="58" y1="42" x2="75" y2="30" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-dasharray="2 2"/>
-                  </svg>
-                  <span class="art-badge">DEEP LEARNING MRI</span>
-                </div>
-              </div>
-              <div class="project-overlay-glow"></div>
-            </div>
-            <div class="project-details">
-              <div class="project-meta">
-                <span class="project-tag">Healthcare & Explainable AI</span>
-                <span class="project-year">2026</span>
-              </div>
-              <h3 class="project-name">Early Brain Tumor Detection with Explainable AI</h3>
-              <p class="project-desc">
-                Designed and trained a deep learning model to detect brain tumors from MRI scans. Integrated Explainable AI (XAI) techniques to surface clinical reasoning behind predictions, improving interpretability and clinician trust.
-              </p>
-              <div class="project-tech-tags">
-                <span>Deep Learning</span>
-                <span>MRI Scans</span>
-                <span>Explainable AI (XAI)</span>
-                <span>TensorFlow</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Project 2: Landslide Susceptibility Mapping -->
-          <div class="project-card glass-card" data-category="geospatial">
-            <div class="project-media-wrapper">
-              <div class="project-visual visual-fintech">
-                <div class="visual-art">
-                  <svg viewBox="0 0 100 100" class="art-svg">
-                    <polygon points="15,75 40,30 60,55 85,25 95,75" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
-                    <polyline points="20,70 42,40 58,60 80,35" stroke="#8b5cf6" stroke-width="2"/>
-                    <circle cx="42" cy="40" r="4" fill="#ff3366"/>
-                    <circle cx="80" cy="35" r="4" fill="#ff3366"/>
-                  </svg>
-                  <span class="art-badge">GIS & REMOTE SENSING</span>
-                </div>
-              </div>
-              <div class="project-overlay-glow"></div>
-            </div>
-            <div class="project-details">
-              <div class="project-meta">
-                <span class="project-tag">Geospatial Data Science</span>
-                <span class="project-year">2026</span>
-              </div>
-              <h3 class="project-name">AI-Based Landslide Susceptibility Mapping</h3>
-              <p class="project-desc">
-                Built a landslide susceptibility mapping model integrating GIS layers (slope, elevation, rainfall, land cover, soil type) derived from DEM and satellite data. Trained and compared Random Forest & XGBoost classifiers to predict landslide-prone zones in QGIS/ArcGIS.
-              </p>
-              <div class="project-tech-tags">
-                <span>QGIS / ArcGIS</span>
-                <span>Random Forest</span>
-                <span>XGBoost</span>
-                <span>DEM Satellite Data</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Project 3: Personal AI Agent -->
-          <div class="project-card glass-card" data-category="systems">
-            <div class="project-media-wrapper">
-              <div class="project-visual visual-jacket">
-                <div class="visual-art">
-                  <svg viewBox="0 0 100 100" class="art-svg">
-                    <rect x="25" y="25" width="50" height="50" rx="8" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
-                    <circle cx="40" cy="45" r="4" fill="#ff6b3d"/>
-                    <circle cx="60" cy="45" r="4" fill="#ff6b3d"/>
-                    <path d="M38,60 Q50,68 62,60" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2"/>
-                    <line x1="50" y1="12" x2="50" y2="25" stroke="#ff3366" stroke-width="2"/>
-                    <circle cx="50" cy="10" r="3" fill="#ff3366"/>
-                  </svg>
-                  <span class="art-badge">LOCAL LLM / OLLAMA</span>
-                </div>
-              </div>
-              <div class="project-overlay-glow"></div>
-            </div>
-            <div class="project-details">
-              <div class="project-meta">
-                <span class="project-tag">AI Systems & Privacy</span>
-                <span class="project-year">2026</span>
-              </div>
-              <h3 class="project-name">Personal AI Agent (Local Hardware System)</h3>
-              <p class="project-desc">
-                Developed a personal AI agent running entirely on local hardware with an Ollama/LLaMA-based architecture, eliminating reliance on cloud APIs. Integrated with the local file system and tools to automate tasks with privacy and offline capabilities.
-              </p>
-              <div class="project-tech-tags">
-                <span>Ollama</span>
-                <span>LLaMA</span>
-                <span>Local AI</span>
-                <span>System Automation</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Project 4: Expiry-Date & Demand Forecasting API -->
-          <div class="project-card glass-card" data-category="health">
-            <div class="project-media-wrapper">
-              <div class="project-visual visual-cosmetic">
-                <div class="visual-art">
-                  <svg viewBox="0 0 100 100" class="art-svg">
-                    <rect x="30" y="25" width="40" height="55" rx="6" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
-                    <line x1="40" y1="40" x2="60" y2="40" stroke="#ff3366" stroke-width="2"/>
-                    <line x1="40" y1="52" x2="55" y2="52" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
-                    <polyline points="20,65 35,50 50,60 70,35" stroke="#ff6b3d" stroke-width="2"/>
-                  </svg>
-                  <span class="art-badge">PRODUCTION ML API</span>
-                </div>
-              </div>
-              <div class="project-overlay-glow"></div>
-            </div>
-            <div class="project-details">
-              <div class="project-meta">
-                <span class="project-tag">Pharma ML & Supply Chain</span>
-                <span class="project-year">2026</span>
-              </div>
-              <h3 class="project-name">Pharma Expiry-Date & Inventory Forecasting API</h3>
-              <p class="project-desc">
-                Production-grade time-series forecasting and regression engine built at Orbiton Life Sciences. Achieved 85%+ accuracy in demand forecasting, reducing stockouts and pharmaceutical batch waste.
-              </p>
-              <div class="project-tech-tags">
-                <span>Time-Series</span>
-                <span>Regression</span>
-                <span>FastAPI / Python</span>
-                <span>Inventory Analytics</span>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-    </section>
-
-    <!-- 06. Skills & Core Competencies Matrix -->
-    <section id="skills" class="section services-section">
-      <div class="container">
-        
-        <div class="services-header">
-          <span class="section-tag">Technical Competencies</span>
-          <h2 class="section-heading">Core Skills & Toolkit</h2>
-        </div>
-
-        <div class="services-grid">
-          
-          <div class="service-card glass-card">
-            <div class="service-icon-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-            </div>
-            <h3 class="service-title">Machine Learning & Modeling</h3>
-            <p class="service-desc">End-to-end predictive modeling pipelines from feature engineering to model deployment.</p>
-            <ul class="service-list">
-              <li>Predictive Modeling & Classification</li>
-              <li>Statistical Analysis & Regression</li>
-              <li>Time-Series Demand Forecasting</li>
-              <li>Explainable AI (XAI) for Clinical Trust</li>
-            </ul>
-          </div>
-
-          <div class="service-card glass-card">
-            <div class="service-icon-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg>
-            </div>
-            <h3 class="service-title">Healthcare & Geospatial Data</h3>
-            <p class="service-desc">Specialized domain analytics combining clinical data pipelines and spatial remote sensing.</p>
-            <ul class="service-list">
-              <li>Biostatistics & Epidemiology</li>
-              <li>Healthcare Data Pipelines & Analytics</li>
-              <li>Geospatial Analysis (QGIS, ArcGIS)</li>
-              <li>Satellite DEM Layer Integration</li>
-            </ul>
-          </div>
-
-          <div class="service-card glass-card">
-            <div class="service-icon-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-            </div>
-            <h3 class="service-title">Languages, Tools & AI</h3>
-            <p class="service-desc">Robust technical stack for data analysis, deep learning, visualization, and local AI agents.</p>
-            <ul class="service-list">
-              <li>Python (Pandas, NumPy, Scikit-learn)</li>
-              <li>TensorFlow & Deep Learning</li>
-              <li>SQL & Big Data Technologies</li>
-              <li>LLMs & AI Agents (Ollama / LLaMA)</li>
-              <li>Data Visualization (Matplotlib, Seaborn)</li>
-            </ul>
-          </div>
-
-        </div>
-
-      </div>
-    </section>
-
-    <!-- 07. Education Section -->
-    <section id="education" class="section process-section">
-      <div class="container">
-        
-        <div class="process-header">
-          <span class="section-tag">Academic Background</span>
-          <h2 class="section-heading">Education</h2>
-          <p class="section-subtext">Solid theoretical foundations in computer science paired with advanced postgraduate specialization in health data science.</p>
-        </div>
-
-        <div class="education-grid">
-          
-          <div class="process-step-card glass-card" style="margin-bottom: 20px;">
-            <div class="step-badge">POSTGRADUATE</div>
-            <h3 class="step-title">M.Sc. Health Data Science</h3>
-            <h4 style="font-size: 15px; color: var(--accent-pink); margin-bottom: 8px;">SRM Institute of Science & Technology</h4>
-            <p class="step-desc">
-              Focusing on biostatistics, clinical epidemiology, machine learning for healthcare, health informatics, and explainable AI systems.
-            </p>
-            <div class="step-deliverable">
-              <span>Duration & Academic Standing:</span> 2025 – Present | <strong>CGPA: 7.68 / 10</strong>
-            </div>
-          </div>
-
-          <div class="process-step-card glass-card">
-            <div class="step-badge">UNDERGRADUATE</div>
-            <h3 class="step-title">B.Sc. (Hons.) Computer Science</h3>
-            <h4 style="font-size: 15px; color: var(--accent-orange); margin-bottom: 8px;">Panskura Banamali College — Vidyasagar University</h4>
-            <p class="step-desc">
-              Comprehensive coursework in data structures, algorithms, relational database management systems (RDBMS), object-oriented programming, and discrete mathematics.
-            </p>
-            <div class="step-deliverable">
-              <span>Graduation & Academic Standing:</span> Graduated 2024 | <strong>CGPA: 7.42 / 10</strong>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-    </section>
-
-    <!-- 08. Contact & Collaboration -->
-    <section id="contact" class="section contact-section">
-      <div class="container">
-        
-        <div class="contact-card glass-card">
-          <div class="contact-glow-ambient"></div>
-
-          <div class="contact-grid">
-            
-            <div class="contact-info-col">
-              <span class="section-tag">Get in Touch</span>
-              <h2 class="contact-title">
-                Let's Discuss Data, AI & Opportunities
-              </h2>
-              <p class="contact-subtitle">
-                Open to full-time roles as a <strong>Data Analyst</strong>, <strong>Health Data Scientist</strong>, or <strong>Machine Learning Engineer</strong>. Let's talk about how I can bring predictive modeling and analytical value to your team.
-              </p>
-
-              <!-- Social / Contact chips -->
-              <div class="contact-social-links">
-                <a href="mailto:rikdebmandal009@gmail.com" class="social-chip">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                  <span>rikdebmandal009@gmail.com</span>
-                </a>
-                <a href="tel:+918759778110" class="social-chip">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                  <span>+91 87597 78110</span>
-                </a>
-                <a href="https://linkedin.com/in/rikdeb-mandal" target="_blank" class="social-chip">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-                  <span>linkedin.com/in/rikdeb-mandal</span>
-                </a>
-                <a href="https://github.com/rikdeb-mandal" target="_blank" class="social-chip">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-                  <span>github.com/rikdeb-mandal</span>
-                </a>
-              </div>
-
-              <!-- QR Instant Contact Card -->
-              <div class="qr-connect-card">
-                <div class="qr-code-wrapper">
-                  <img src="qr-code.png" alt="Scan QR Code to connect with Rikdeb Mandal" class="qr-code-image">
-                </div>
-                <div class="qr-info">
-                  <span class="qr-badge">SCAN TO CONNECT</span>
-                  <h4 class="qr-title">Instant Digital Pass</h4>
-                  <p class="qr-desc">Scan with your camera for instant portfolio access & direct contact connection.</p>
-                  <div class="qr-location-tag">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="location-mini-icon"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <span>Paschim Medinipur, WB, India</span>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            <!-- Contact Form -->
-            <div class="contact-form-col">
-              <form id="contactForm" class="contact-form" onsubmit="event.preventDefault(); handleFormSubmit();">
-                <div class="form-group">
-                  <label for="name" class="form-label">Your Name</label>
-                  <input type="text" id="name" class="form-input" placeholder="e.g. Hiring Manager / Recruiter" required>
-                </div>
-
-                <div class="form-group">
-                  <label for="email" class="form-label">Your Email</label>
-                  <input type="email" id="email" class="form-input" placeholder="recruiter@company.com" required>
-                </div>
-
-                <div class="form-group">
-                  <label for="serviceType" class="form-label">Role / Opportunity Type</label>
-                  <select id="serviceType" class="form-input form-select">
-                    <option value="health-data">Health Data Science Role</option>
-                    <option value="data-analyst">Data Analyst Position</option>
-                    <option value="ml-engineer">Machine Learning Engineer</option>
-                    <option value="consulting">Project Collaboration / Research</option>
-                  </select>
-                </div>
-
-                <div class="form-group">
-                  <label for="message" class="form-label">Message / Details</label>
-                  <textarea id="message" class="form-input form-textarea" rows="4" placeholder="Hello Rikdeb, we would like to discuss an opportunity..." required></textarea>
-                </div>
-
-                <button type="submit" id="submitBtn" class="btn btn-primary btn-submit">
-                  <span>Send Message to Rikdeb</span>
-                  <svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-                </button>
-
-                <div id="formFeedback" class="form-feedback"></div>
-              </form>
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="site-footer">
-      <div class="container footer-container">
-        <div class="footer-brand">
-          <span class="footer-logo">RIKDEB MANDAL.</span>
-          <p class="footer-tagline">Data Analyst & Health Data Science Professional</p>
-        </div>
-
-        <div class="footer-meta">
-          <span class="availability-pill">
-            <span class="pulse-dot"></span> Open for Roles & Opportunities
-          </span>
-          <span class="copyright-text">© 2026 Rikdeb Mandal. All rights reserved.</span>
-        </div>
-
-        <a href="#hero" class="back-to-top" aria-label="Back to Top">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
-        </a>
-      </div>
-    </footer>
-
   </div>
 
-  <script src="script.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
