@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -56,11 +56,14 @@
 
     <section id="students" class="container students">
       <div class="section-header">
-        <h2>Student Directory</h2>
+        <div>
+          <h2>Student Directory</h2>
+          <p id="student-count" class="muted" style="margin:4px 0 0 0;font-size:13.5px">Showing 9 of 9 candidates</p>
+        </div>
         <div class="controls">
-          <input id="search" placeholder="Search students, skills, projects, companies..." />
-          <select id="filter-select">
-            <option value="all">All</option>
+          <input id="search" placeholder="Search students, skills, projects, companies..." aria-label="Search students" />
+          <select id="filter-select" aria-label="Filter by domain">
+            <option value="all">All Domains</option>
           </select>
         </div>
       </div>
@@ -68,27 +71,77 @@
     </section>
 
     <section id="projects" class="container projects">
-      <h2>Project Showcase</h2>
-      <div id="project-filters" class="controls small">
-        <input id="project-search" placeholder="Search projects..." />
-        <select id="project-type-filter">
-          <option value="all">All</option>
-          <option value="academic">Academic</option>
-          <option value="industry">Industry</option>
-        </select>
+      <div class="section-header">
+        <div>
+          <h2>Project Showcase</h2>
+          <p class="muted" style="margin:4px 0 0 0;font-size:14px">Explore clinical AI models, healthcare analytics systems, and industry immersion deliverables.</p>
+        </div>
+        <div id="project-filters" class="controls small">
+          <input id="project-search" placeholder="Search projects, skills, students..." aria-label="Search projects" />
+          <select id="project-type-filter" aria-label="Filter by project type">
+            <option value="all">All Projects</option>
+            <option value="academic">Academic Research</option>
+            <option value="industry">Industry Immersion</option>
+          </select>
+        </div>
       </div>
-      <div id="project-grid" class="grid"></div>
+      <div id="project-stats" class="project-stats"></div>
+      <div id="project-grid" class="grid project-grid"></div>
       <div id="project-pagination" class="pagination" aria-label="Project pagination">
-        <button id="proj-prev" class="btn-small" aria-label="Previous page">&lt;</button>
-        <div id="proj-page-info" class="page-info">0 | 0</div>
-        <button id="proj-next" class="btn-small" aria-label="Next page">&gt;</button>
+        <button id="proj-prev" class="btn-small" aria-label="Previous page">&lt; Prev</button>
+        <div id="proj-page-info" class="page-info">Page 1 of 1</div>
+        <button id="proj-next" class="btn-small" aria-label="Next page">Next &gt;</button>
       </div>
     </section>
 
     <section id="skills" class="container skills">
-      <h2>Skills / Talent Map</h2>
-      <div id="skills-map" class="skills-map"></div>
+      <div class="section-header">
+        <div>
+          <h2>Skills / Talent Map</h2>
+          <p class="muted" style="margin:4px 0 0 0;font-size:14px">Interactive capability matrix across the M.Sc. Health Data Science cohort. Click any skill to explore candidate profiles.</p>
+        </div>
+        <div class="skills-legend">
+          <span class="legend-item"><span class="legend-dot" style="background:#06b6d4"></span>Core Data &amp; Stats</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#8b5cf6"></span>AI, ML &amp; GenAI</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#10b981"></span>Clinical &amp; Health</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#f59e0b"></span>BI &amp; Domain</span>
+        </div>
+      </div>
+
+      <div class="skills-toolbar">
+        <div class="skills-search-wrap">
+          <input id="skills-search" type="text" placeholder="Filter skills (e.g. Python, RAG, Clinical, Power BI, Deep Learning)..." aria-label="Filter skills">
+        </div>
+        <div class="skills-sort-wrap">
+          <span class="muted" style="font-size:12px">Sort:</span>
+          <button id="skills-sort-count" class="skill-sort-btn active" type="button" title="Sort by highest proficiency">Proficiency</button>
+          <button id="skills-sort-name" class="skill-sort-btn" type="button" title="Sort alphabetically">A–Z</button>
+        </div>
+      </div>
+
+      <div id="skills-category-tabs" class="skills-category-tabs" role="tablist" aria-label="Skill categories"></div>
+      <div id="skills-map" class="skills-map" aria-live="polite"></div>
+      <div id="skills-summary-bar" class="skills-summary-bar"></div>
     </section>
+
+    <!-- Skill Detail Panel (slide-in) -->
+    <div id="skill-detail-panel" class="skill-detail-panel" aria-hidden="true" role="dialog">
+      <div class="skill-detail-inner">
+        <div class="skill-detail-header">
+          <div>
+            <div id="skill-detail-category" class="skill-detail-cat-label"></div>
+            <h3 id="skill-detail-name"></h3>
+          </div>
+          <button id="skill-panel-close" class="modal-close" aria-label="Close skill panel">×</button>
+        </div>
+        <p id="skill-detail-count" class="skill-detail-count-label"></p>
+        <div id="skill-detail-bar" class="skill-detail-progress"></div>
+        <div id="skill-detail-action" style="margin-bottom:18px"></div>
+        <h4 style="margin:0 0 10px 0;font-size:12px;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted)">Candidates with this skill</h4>
+        <div id="skill-detail-students" class="skill-detail-students"></div>
+      </div>
+    </div>
+    <div id="skill-detail-backdrop" class="skill-detail-backdrop" aria-hidden="true"></div>
 
     <section id="industry" class="container industry">
       <h2>Industry Experience</h2>
@@ -141,6 +194,14 @@
     <div class="modal-content">
       <button id="intern-modal-close" class="modal-close" aria-label="Close">×</button>
       <div id="intern-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Project Details Modal -->
+  <div id="project-modal" class="modal" role="dialog" aria-hidden="true">
+    <div class="modal-content project-modal-content">
+      <button id="project-modal-close" class="modal-close" aria-label="Close">×</button>
+      <div id="project-modal-body"></div>
     </div>
   </div>
 
