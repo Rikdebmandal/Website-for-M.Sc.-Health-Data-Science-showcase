@@ -1,45 +1,52 @@
-# Rikdeb Mandal — Health Data Science & AI Portfolio
+# School of Public Health — M.Sc. Health Data Science
+## Student Talent Showcase (Batch 2025–2027)
 
-> **Transforming Complex Healthcare & Geospatial Data into Actionable Intelligence**
+> **SRM Institute of Science and Technology — Kattankulathur, Chengalpattu**
 
-An interactive, high-performance personal portfolio featuring a continuous 240-frame video scroll engine, dark luxury glassmorphism design system, and key projects in Health Data Science, Explainable AI (XAI), Time-Series Forecasting, and Geospatial Analytics.
+An interactive, high-performance web application showcasing the student cohort, research projects, industry immersion deliverables, and technical capabilities of the M.Sc. Health Data Science (Batch 2025–2027) programme.
 
 ---
 
 ## ✨ Features
 
-- 🎞️ **Continuous Frame Scroll Engine**: 240-frame sequence rendered smoothly via HTML5 Canvas with High-DPI scaling and LERP (Linear Interpolation) damping.
-- 💎 **Modern Dark Luxury Aesthetic**: Glassmorphism cards, ambient studio lighting glow, and curated typography (`Syne` + `Plus Jakarta Sans`).
-- 🔬 **Resume & Case Studies**:
-  - **Early Brain Tumor Detection with Explainable AI** (MRI Clinical Reasoning & Saliency Maps).
-  - **AI-Based Landslide Susceptibility Mapping** (Multi-source GIS, Random Forest, XGBoost).
-  - **Personal AI Agent** (Privacy-First Local System with Ollama / LLaMA).
-  - **Pharma Expiry-Date & Inventory Forecasting API** (Production time-series engine with 85%+ accuracy).
-- 🎓 **Education & Work Experience**: M.Sc. Health Data Science (SRM IST) & B.Sc. (Hons.) Computer Science (Vidyasagar University) + Data Analytics Internship at Orbiton Life Sciences.
-- 📱 **Interactive Contact Pass**: Instant contact card with scanned digital QR code pass and role inquiry form.
-- ⚡ **Zero-Dependency Architecture**: Built purely with semantic HTML5, Vanilla CSS3, and modern JavaScript ES6+.
+- 🎓 **Student Directory**: Detailed candidate profiles featuring academic background, technical skills, domain interests, industry immersion experience, certifications, and direct contact options (LinkedIn, GitHub, Email, Mobile).
+- 🔬 **Project Showcase**: Searchable and filterable repository of academic research projects and industry deliverables across Clinical AI, Healthcare Analytics, NLP, Computer Vision, and Electronic Medical Records.
+- 📊 **Interactive Skills & Talent Matrix**: Cohort-wide capability map sorted by proficiency or alphabetical order, categorized into:
+  - **Core Data & Stats**: Python, R, SQL, Biostatistics, EDA, Data Cleaning.
+  - **AI, ML & GenAI**: Deep Learning, LLMs, RAG, Prompt Engineering, Computer Vision.
+  - **Clinical & Health**: Clinical Data Management, GCP, EMR/HIS, Pharmacovigilance.
+  - **BI & Domain**: Power BI, Tableau, Excel, Healthcare Business Intelligence.
+- 🏢 **Industry Immersion Tracker**: Highlights real-world projects completed at top healthcare, pharmaceutical, and technology organizations (e.g., Orbiton Life Sciences, Prediscan Medtech, MSMF, Suvij IT Services, MDRF, NIEPMD).
+- 🎯 **Recruiter Talent Finder**: Interactive multi-parameter search engine allowing placement officers and recruiters to quickly discover candidates matching specific technical and domain criteria.
+- 📱 **Modern & Responsive Aesthetic**: Dark luxury glassmorphism theme, smooth modal popups, slide-in detail drawers, and micro-animations.
+- ⚡ **Zero-Dependency Architecture**: Built purely using HTML5, Vanilla CSS3, and ES6+ JavaScript for optimal speed and reliability.
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Technology Stack
 
-- **Frontend**: HTML5, Vanilla CSS3 (Custom Glassmorphism Design System), JavaScript (ES6+)
-- **Graphics Engine**: HTML5 2D Canvas with dynamic DPR scaling & LERP interpolation
-- **Data & ML Domains**: Python (Pandas, NumPy, Scikit-learn), TensorFlow, SQL, Geospatial GIS (QGIS, ArcGIS), Ollama LLMs, Biostatistics
+- **Frontend**: HTML5, Vanilla CSS3 (Custom Glassmorphic Layouts), Modern JavaScript (ES6+ async/await engine)
+- **Data Stores**: Structured JSON data engines (`students.json`, `brochure_pages.json`)
+- **Graphics & Assets**: High-resolution image optimization & SVG icon metrics
+- **Server**: Lightweight Python HTTP server (`serve.py`) with no-cache header configuration
 
 ---
 
 ## 📂 Project Structure
 
 ```
-├── frames/                  # 240 JPG image frames for scroll animation
-│   ├── ezgif-frame-001.jpg
-│   └── ...
-├── index.html               # Semantic HTML5 portfolio markup
-├── style.css                # Custom glassmorphic styles and responsive layouts
-├── script.js                # Canvas scroll engine, preloader, and interactive logic
-├── qr-code.png              # Digital instant contact pass QR code
-└── README.md                # Project documentation
+.
+├── assets/
+│   └── brochure_extract/
+│       ├── students.json          # Primary dataset of candidate profiles, skills & projects
+│       ├── brochure_pages.json    # Cached brochure text extracts for deep search
+│       └── page_*_img_*.png/.jpeg # Profile photographs and institution logos
+├── index.html                     # Main single-page application entry point
+├── site-style.css                 # Full design system, dark mode glassmorphism, responsive styles
+├── app.js                         # Main application engine (filters, pagination, modals, skills map)
+├── serve.py                       # Python HTTP server script with cache-control headers
+├── .gitignore                     # Git ignore file
+└── README.md                      # Comprehensive project documentation
 ```
 
 ---
@@ -47,35 +54,39 @@ An interactive, high-performance personal portfolio featuring a continuous 240-f
 ## 🚀 Getting Started
 
 ### Prerequisites
-You only need any modern web browser.
+Any modern web browser (Google Chrome, Mozilla Firefox, Microsoft Edge, Safari).
 
-### Local Setup
-1. Clone this repository:
+### Local Execution
+1. Clone the repository:
    ```bash
-   git clone https://github.com/Rikdebmandal/portfolio.git
-   cd portfolio
+   git clone https://github.com/Rikdebmandal/Website-for-M.Sc.-Health-Data-Science-showcase.git
+   cd Website-for-M.Sc.-Health-Data-Science-showcase
    ```
-2. Start a local HTTP server:
-   ```bash
-   # Using Python
-   python -m http.server 8080
 
-   # Or using Node.js (npx)
-   npx serve .
+2. Start the local server:
+   ```bash
+   python serve.py
    ```
-3. Open `http://localhost:8080` in your web browser.
+   *(Alternatively, run `python -m http.server 5500`)*
+
+3. Open your browser and navigate to:
+   ```
+   http://localhost:5500
+   ```
 
 ---
 
-## 📬 Contact & Connect
+## 📬 Placement & Institutional Contacts
 
-- **Name**: Rikdeb Mandal
-- **Email**: [rikdebmandal009@gmail.com](mailto:rikdebmandal009@gmail.com)
-- **Phone**: +91 87597 78110
-- **Location**: Paschim Medinipur, West Bengal, India
-- **LinkedIn**: [linkedin.com/in/rikdeb-mandal](https://linkedin.com/in/rikdeb-mandal)
-- **GitHub**: [github.com/rikdeb-mandal](https://github.com/rikdeb-mandal)
+- **Institution**: School of Public Health, SRM Institute of Science and Technology, Kattankulathur, Chengalpattu – 603203
+- **Placement Officer**: Dr. Prakash M — Associate Professor & In-charge Student Placement
+- **Email**: [Prakashm6@srmist.edu.in](mailto:Prakashm6@srmist.edu.in)
+- **Contact Number**: +91 99946 98007
 
 ---
 
-© 2026 Rikdeb Mandal. All rights reserved.
+## 👨‍💻 Developer & Maintainer
+
+Designed and developed by **[Rikdeb Mandal](https://github.com/Rikdebmandal)** (M.Sc. Health Data Science, SRM Institute of Science and Technology).
+
+© 2026 SRM Institute of Science and Technology — School of Public Health.

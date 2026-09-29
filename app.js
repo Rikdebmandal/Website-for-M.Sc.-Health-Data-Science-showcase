@@ -1,5 +1,8 @@
 async function loadStudents(){
   const res = await fetch('assets/brochure_extract/students.json');
+  if(!res.ok){
+    throw new Error(`HTTP ${res.status} fetching assets/brochure_extract/students.json`);
+  }
   const data = await res.json();
   return data.students || [];
 }
@@ -327,10 +330,39 @@ async function openProfileModal(s){
   const github = ensureUrl(s.github);
   const email = s.email ? 'mailto:' + s.email : null;
 
-  const educationHtml = parseEducationToTable(s.education_raw);
-  const industry = s.industry_immersion ? s.industry_immersion.replace(/\n/g,'<br/>') : '';
-  let academicItems = splitNumberedItems(s.academic_projects || '');
-  const industryItems = splitNumberedItems(s.industry_immersion || '');
+  // education: array of {program, institution, completion_year, score}
+  let educationHtml = '';
+  if(Array.isArray(s.education) && s.education.length > 0){
+    educationHtml = '<table class="education-table"><thead><tr><th>Degree / Program</th><th>Institution</th><th>Year</th><th>CGPA / %</th></tr></thead><tbody>';
+    s.education.forEach(e => {
+      educationHtml += `<tr><td>${e.program||''}</td><td>${e.institution||''}</td><td>${e.completion_year||''}</td><td>${e.score||''}</td></tr>`;
+    });
+    educationHtml += '</tbody></table>';
+  } else if(s.education_raw) {
+    educationHtml = parseEducationToTable(s.education_raw);
+  }
+
+  // industry_immersion: object {company, duration, role, projects[]}
+  const imm = s.industry_immersion;
+  let industry = '';
+  let industryItems = [];
+  if(imm && typeof imm === 'object'){
+    industry = [imm.company, imm.role, imm.duration].filter(Boolean).join(' — ');
+    industryItems = Array.isArray(imm.projects) ? imm.projects : [];
+  } else if(typeof imm === 'string' && imm){
+    industry = imm.replace(/\n/g,'<br/>');
+    industryItems = splitNumberedItems(imm);
+  }
+
+  // academic_projects: array of strings
+  let academicItems = [];
+  if(Array.isArray(s.academic_projects)){
+    academicItems = s.academic_projects.filter(Boolean);
+  } else if(typeof s.academic_projects === 'string' && s.academic_projects){
+    academicItems = splitNumberedItems(s.academic_projects);
+  }
+
+
   const skills = (s.technical_skills || '').split(',').map(x=>x.trim()).filter(Boolean);
   const certs = (s.certifications || '').split(/[\n,]+/).map(x=>x.trim()).filter(Boolean);
   let languagesArr = (s.languages || '').split(',').map(x=>x.trim()).filter(Boolean);
@@ -370,9 +402,15 @@ async function openProfileModal(s){
     <section>
       <h3>Industry Immersion / Internship</h3>
       <div class="project-card">${industry}</div>
-      ${industryItems.length? '<p><strong>Internship projects:</strong></p>':''}
+      ${industryItems.length? '<p><strong>Projects:</strong></p>':''}
       <ul>${industryItems.map(i=>'<li>'+i+'</li>').join('')}</ul>
     </section>
+
+    ${s.key_contributions ? `
+    <section>
+      <h3>Key Contributions / Learnings</h3>
+      <p style="color:var(--text);font-weight:600;font-size:14.5px;line-height:1.65;margin:0">${s.key_contributions}</p>
+    </section>` : ''}
 
     <section>
       <h3>Academic Projects</h3>
@@ -383,6 +421,12 @@ async function openProfileModal(s){
       <h3>Technical Skills</h3>
       <div>${skills.map(s=>'<span class="skill-tag">'+s+'</span>').join('')}</div>
     </section>
+
+    ${certs && certs.length > 0 ? `
+    <section>
+      <h3>Certifications</h3>
+      <div>${certs.map(c=>'<span class="pill" style="margin:2px 4px 4px 0;display:inline-block;font-size:12px">'+c+'</span>').join('')}</div>
+    </section>` : ''}
 
     <section>
       <h3>Languages</h3>
@@ -422,10 +466,6 @@ async function openProfileModal(s){
     const areaPill = document.getElementById('profile-area');
     if(areaPill) areaPill.style.background = `${col}11`;
   });
-
-  body.innerHTML = html;
-  modal.classList.add('open');
-  modal.setAttribute('aria-hidden','false');
 }
 
 function closeModal(){
@@ -493,7 +533,11 @@ function buildFilters(students){
       opt.textContent = `All Domains (${students.length})`;
     } else {
       const matchCount = students.filter(s => {
-        const domainHay = [s.area_of_interest, s.technical_skills, s.academic_projects, s.industry_immersion].filter(Boolean).join(' ').toLowerCase();
+        const immStr = s.industry_immersion && typeof s.industry_immersion === 'object'
+          ? [s.industry_immersion.company, s.industry_immersion.role, (s.industry_immersion.projects||[]).join(' ')].join(' ')
+          : (s.industry_immersion || '');
+        const acadStr = Array.isArray(s.academic_projects) ? s.academic_projects.join(' ') : (s.academic_projects || '');
+        const domainHay = [s.area_of_interest, s.technical_skills, acadStr, immStr].filter(Boolean).join(' ').toLowerCase();
         return f.keywords.some(kw => domainHay.includes(kw));
       }).length;
       opt.textContent = `${f.label} (${matchCount})`;
@@ -507,11 +551,17 @@ function filterStudents(students, q, areaId){
   areaId = areaId ? areaId.toLowerCase() : 'all';
 
   return students.filter(s => {
+    const immStr = s.industry_immersion && typeof s.industry_immersion === 'object'
+      ? [s.industry_immersion.company, s.industry_immersion.role, s.industry_immersion.duration, (s.industry_immersion.projects||[]).join(' ')].join(' ')
+      : (s.industry_immersion || '');
+    const acadStr = Array.isArray(s.academic_projects) ? s.academic_projects.join(' ') : (s.academic_projects || '');
+    const eduStr = Array.isArray(s.education) ? s.education.map(e=>[e.program,e.institution].join(' ')).join(' ') : (s.education_raw || '');
+
     // 1. Domain category filter
     if(areaId !== 'all'){
       const filterObj = DOMAIN_FILTERS.find(f => f.id === areaId);
       if(filterObj && filterObj.keywords){
-        const domainHay = [s.area_of_interest, s.technical_skills, s.academic_projects, s.industry_immersion].filter(Boolean).join(' ').toLowerCase();
+        const domainHay = [s.area_of_interest, s.technical_skills, acadStr, immStr].filter(Boolean).join(' ').toLowerCase();
         const matchesDomain = filterObj.keywords.some(kw => domainHay.includes(kw));
         if(!matchesDomain) return false;
       }
@@ -523,12 +573,12 @@ function filterStudents(students, q, areaId){
       s.name,
       s.area_of_interest,
       s.technical_skills,
-      s.industry_immersion,
+      immStr,
       s.key_contributions,
-      s.academic_projects,
+      acadStr,
       s.certifications,
       s.languages,
-      s.education_raw
+      eduStr
     ].filter(Boolean).join(' ').toLowerCase();
 
     // support space or '+' separated keywords (AND logic)
@@ -545,8 +595,11 @@ function buildProjects(students){
 
   students.forEach(s => {
     // 1. Academic Projects
-    if (s.academic_projects) {
-      const parts = splitNumberedItems(s.academic_projects);
+    const acadProjectsArr = Array.isArray(s.academic_projects)
+      ? s.academic_projects.filter(Boolean)
+      : splitNumberedItems(s.academic_projects || '');
+    if (acadProjectsArr.length > 0) {
+      const parts = acadProjectsArr;
       parts.forEach(title => {
         if (title.length > 5) {
           const skills = extractTechSkills(title, '', s.technical_skills);
@@ -571,19 +624,28 @@ function buildProjects(students){
     }
 
     // 2. Industry Immersion Projects
-    if (s.industry_immersion) {
-      const text = cleanText(s.industry_immersion);
-      let org = 'Industry Partner';
-      if (/orbiton/i.test(text)) org = 'Orbiton Life Sciences';
-      else if (/prediscan/i.test(text)) org = 'Prediscan Medtech Pvt. Ltd';
-      else if (/suvij/i.test(text)) org = 'Suvij IT Services Pvt. Ltd';
-      else if (/madras diabetes/i.test(text) || /mdrf/i.test(text)) org = 'Madras Diabetes Research Foundation';
-      else if (/msmf|mazumdhar/i.test(text)) org = 'Mazumdar Shaw Medical Foundation (MSMF)';
-      else if (/niepmd|ottobock|endolite/i.test(text)) org = 'NIEPMD / Ottobock India / Endolite India';
+    const imm = s.industry_immersion;
+    if (imm) {
+      let text = '';
+      let immProjects = [];
+      if(imm && typeof imm === 'object'){
+        text = [imm.company, imm.role, imm.duration, (imm.projects||[]).join(' ')].join(' ');
+        immProjects = Array.isArray(imm.projects) ? imm.projects.filter(p => p && p.length > 5) : [];
+      } else {
+        text = cleanText(imm);
+      }
+      let org = (imm && typeof imm === 'object' && imm.company) ? imm.company : 'Industry Partner';
+      if(org === 'Industry Partner'){
+        if (/orbiton/i.test(text)) org = 'Orbiton Life Sciences';
+        else if (/prediscan/i.test(text)) org = 'Prediscan Medtech Pvt. Ltd';
+        else if (/suvij/i.test(text)) org = 'Suvij IT Services Pvt. Ltd';
+        else if (/madras diabetes/i.test(text) || /mdrf/i.test(text)) org = 'Madras Diabetes Research Foundation';
+        else if (/msmf|mazumdhar/i.test(text)) org = 'Mazumdar Shaw Medical Foundation (MSMF)';
+        else if (/niepmd|ottobock|endolite/i.test(text)) org = 'NIEPMD / Ottobock India / Endolite India';
+      }
 
       const contrib = s.key_contributions || '';
-      const mainPart = text.split(/KEY CONTRIBUTION|Key Learning/i)[0];
-      const numberedMatches = splitNumberedItems(mainPart);
+      const numberedMatches = immProjects.length > 0 ? immProjects : splitNumberedItems((typeof imm === 'string' ? imm : '').split(/KEY CONTRIBUTION|Key Learning/i)[0]);
 
       if (numberedMatches.length > 0) {
         for (const pText of numberedMatches) {
@@ -899,91 +961,109 @@ function projectNext(){
    SKILLS / TALENT MAP
 ───────────────────────────────────────────── */
 
-// Canonical skill name normalization map
+// Canonical skill name normalization map (consolidated & minimal)
 const SKILL_ALIASES = {
-  'powerbi':              'Power BI',
-  'power bi':             'Power BI',
-  'power-bi':             'Power BI',
-  'ml':                   'Machine Learning',
-  'machine learning':     'Machine Learning',
-  'machine learning and deep learning.': 'Machine Learning',
+  // Core Data & Stats
+  'python': 'Python',
+  'pandas': 'Python',
+  'numpy': 'Python',
+  'pandas & numpy': 'Python',
+  'sql': 'SQL',
+  'r': 'R Programming',
+  'excel': 'Excel',
+  'data analysis': 'Data Analysis & EDA',
+  'data analysis & eda': 'Data Analysis & EDA',
+  'data analysis @ eda': 'Data Analysis & EDA',
+  'data analytics': 'Data Analysis & EDA',
+  'data analytics.': 'Data Analysis & EDA',
+  'eda': 'Data Analysis & EDA',
+  'exploratory data analysis': 'Data Analysis & EDA',
+  'data visualization': 'Data Analysis & EDA',
+  'matplotlib': 'Data Analysis & EDA',
+  'seaborn': 'Data Analysis & EDA',
+  'matplotlib & seaborn': 'Data Analysis & EDA',
+  'data preprocessing': 'Data Preprocessing & Feature Engineering',
+  'data pre-processing': 'Data Preprocessing & Feature Engineering',
+  'data cleaning': 'Data Preprocessing & Feature Engineering',
+  'feature engineering': 'Data Preprocessing & Feature Engineering',
+  'data preprocessing and feature engineering': 'Data Preprocessing & Feature Engineering',
+  'data preprocessing & feature engineering': 'Data Preprocessing & Feature Engineering',
+  'statistical programming': 'Biostatistics & Statistical Analysis',
+  'statistical programming.': 'Biostatistics & Statistical Analysis',
+  'statistical analysis': 'Biostatistics & Statistical Analysis',
+  'biostatistics': 'Biostatistics & Statistical Analysis',
+  'spss': 'Biostatistics & Statistical Analysis',
+
+  // AI, Machine Learning & GenAI
+  'ml': 'Machine Learning',
+  'machine learning': 'Machine Learning',
   'machine learning fundamentals (k-means': 'Machine Learning',
-  'deep learning':        'Deep Learning',
-  'deep learning.':       'Deep Learning',
-  'dl':                   'Deep Learning',
-  'deep learning (cnn, yolov8 etc.)': 'Deep Learning',
-  'python':               'Python',
-  'sql':                  'SQL',
-  'r':                    'R',
-  'excel':                'Excel',
-  'tableau':              'Tableau',
-  'spss':                 'SPSS',
-  'eda':                  'EDA',
-  'exploratory data analysis': 'EDA',
-  'data analysis':        'Data Analysis',
-  'data analytics':       'Data Analysis',
-  'data analytics.':      'Data Analysis',
-  'data cleaning':        'Data Preprocessing',
-  'data preprocessing':   'Data Preprocessing',
-  'data pre-processing':  'Data Preprocessing',
-  'data preprocessing and feature engineering': 'Feature Engineering',
-  'feature engineering':  'Feature Engineering',
-  'statistical programming': 'Statistical Programming',
-  'statistical programming.': 'Statistical Programming',
-  'statistical analysis': 'Statistical Analysis',
-  'biostatistics':        'Biostatistics',
-  'clinical data management': 'Clinical Data Management',
-  'clinical trial data management': 'Clinical Data Management',
-  'healthcare analytics': 'Healthcare Analytics',
-  'healthcare and clinical data analytics': 'Healthcare Analytics',
-  'healthcare analytics.': 'Healthcare Analytics',
-  'healthcare analytics. generative ai & automation: prompt engineering': 'LLM & Generative AI',
-  'pharmacovigilance.':   'Pharmacovigilance',
-  'pharmacovigilance':    'Pharmacovigilance',
-  'pharmacovigilance & adr detection.': 'Pharmacovigilance',
-  'pharmacovigilance & adr detection': 'Pharmacovigilance',
+  'machine learning and deep learning': 'Machine Learning',
+  'machine learning and deep learning.': 'Machine Learning',
+  'predictive analysis': 'Machine Learning',
+  'predictive modeling': 'Machine Learning',
+  'dbscan': 'Machine Learning',
+  'hdbscan': 'Machine Learning',
+  'deep learning': 'Deep Learning & Neural Networks',
+  'deep learning.': 'Deep Learning & Neural Networks',
+  'dl': 'Deep Learning & Neural Networks',
+  'data augmentation': 'Deep Learning & Neural Networks',
+  'llm': 'LLMs, RAG & GenAI',
+  'generative ai': 'LLMs, RAG & GenAI',
+  'llm fine-tuning & slm building': 'LLMs, RAG & GenAI',
+  'claude code.': 'LLMs, RAG & GenAI',
+  'healthcare analytics. generative ai & automation: prompt engineering': 'LLMs, RAG & GenAI',
+  'rag': 'LLMs, RAG & GenAI',
+  'retrieval-augmented generation (rag)': 'LLMs, RAG & GenAI',
+  'langchain': 'LLMs, RAG & GenAI',
+  'prompt engineering': 'Prompt Engineering',
+  'prompt engineering.': 'Prompt Engineering',
   'natural language processing': 'Natural Language Processing (NLP)',
-  'nlp':                  'Natural Language Processing (NLP)',
-  'llm':                  'LLM & Generative AI',
-  'llm fine-tuning & slm building': 'LLM & Generative AI',
-  'generative ai':        'LLM & Generative AI',
-  'claude code.':         'LLM & Generative AI',
-  'rag':                  'RAG (Retrieval-Augmented Generation)',
-  'retrieval-augmented generation (rag)': 'RAG (Retrieval-Augmented Generation)',
-  'langchain':            'LangChain',
-  'prompt engineering':   'Prompt Engineering',
-  'prompt engineering.':  'Prompt Engineering',
-  'ai agents (crewai':    'AI Agents (CrewAI, AutoGen)',
-  'autogen)':             'AI Agents (CrewAI, AutoGen)',
-  'knowledge graphs':     'Knowledge Graphs',
-  'workflow automation (n8n)': 'Workflow Automation (n8n)',
-  'etl':                  'ETL & Pipelines',
-  'data augmentation':    'Data Augmentation',
+  'nlp': 'Natural Language Processing (NLP)',
   'medical image analysis': 'Medical Image Analysis',
   'image analysis & segmentation': 'Medical Image Analysis',
-  'clinical documentation': 'Clinical Documentation',
-  'natural':              null,
-  'apriori)':             null,
-  'dbscan':               'Machine Learning',
-  'hdbscan':              'Machine Learning',
-  'looker studio':        'Looker Studio',
-  'matplotlib':           'Matplotlib & Seaborn',
-  'seaborn':              'Matplotlib & Seaborn',
-  'pandas':               'Pandas & NumPy',
-  'numpy':                'Pandas & NumPy',
-  'documentation and report writing': 'Documentation & Reporting',
-  'data visualization':   'Data Visualization',
-  'predictive analysis':  'Predictive Analysis',
-  'project management':   'Project Management',
-  'sales & communication': 'Communication & Domain',
-  'marketing':            'Communication & Domain',
-  'sas':                  'SAS',
-  'ai engineer':          'AI / ML Engineering',
-  'ai  engineer':         'AI / ML Engineering',
-  'ai/ml engineer':       'AI / ML Engineering',
-  'cloud engineer':       'Cloud Engineering',
+  'explainable ai': 'Explainable AI (XAI)',
+  'explainable ai (ready to learn anything)': 'Explainable AI (XAI)',
   'explainable ai.(ready to learn anything)': 'Explainable AI (XAI)',
-  'explainable ai':       'Explainable AI (XAI)',
+  'ai agents (crewai': 'AI Agents & Workflow Automation',
+  'autogen)': 'AI Agents & Workflow Automation',
+  'ai agents (crewai, autogen)': 'AI Agents & Workflow Automation',
+  'knowledge graphs': 'AI Agents & Workflow Automation',
+  'workflow automation (n8n)': 'AI Agents & Workflow Automation',
+  'ai engineer': 'AI/ML & Cloud Engineering',
+  'ai  engineer': 'AI/ML & Cloud Engineering',
+  'ai/ml engineer': 'AI/ML & Cloud Engineering',
+  'cloud engineer': 'AI/ML & Cloud Engineering',
+  'etl': 'AI/ML & Cloud Engineering',
+  'etl & pipelines': 'AI/ML & Cloud Engineering',
+  'apriori)': null,
+  'natural': null,
+
+  // Clinical & Health
+  'clinical data management': 'Clinical Data Management',
+  'clinical trial data management': 'Clinical Data Management',
+  'healthcare analytics': 'Healthcare & Clinical Analytics',
+  'healthcare and clinical data analytics': 'Healthcare & Clinical Analytics',
+  'healthcare analytics.': 'Healthcare & Clinical Analytics',
+  'documentation and report writing': 'Clinical Documentation & Reporting',
+  'clinical documentation': 'Clinical Documentation & Reporting',
+  'pharmacovigilance': 'Pharmacovigilance & Drug Safety',
+  'pharmacovigilance.': 'Pharmacovigilance & Drug Safety',
+  'pharmacovigilance & adr detection': 'Pharmacovigilance & Drug Safety',
+  'pharmacovigilance & adr detection.': 'Pharmacovigilance & Drug Safety',
+  'sas': 'Clinical SAS',
+  'clinical sas': 'Clinical SAS',
+
+  // BI & Domain
+  'power bi': 'Power BI & BI Platforms',
+  'powerbi': 'Power BI & BI Platforms',
+  'power-bi': 'Power BI & BI Platforms',
+  'looker studio': 'Power BI & BI Platforms',
+  'tableau': 'Tableau',
+  'project management': 'Healthcare Project & Operations Management',
+  'sales & communication': 'Healthcare Project & Operations Management',
+  'marketing': 'Healthcare Project & Operations Management',
+  'communication & domain': 'Healthcare Project & Operations Management'
 };
 
 // Category taxonomy
@@ -991,32 +1071,50 @@ const SKILL_CATEGORIES = {
   'core': {
     label: 'Core Data & Stats',
     color: '#06b6d4',
-    skills: new Set(['Python','SQL','R','Excel','EDA','Data Analysis','Data Preprocessing',
-      'Feature Engineering','Statistical Programming','Statistical Analysis','Biostatistics',
-      'SPSS','Documentation & Reporting','Predictive Analysis','Data Visualization',
-      'Pandas & NumPy','Matplotlib & Seaborn'])
+    skills: new Set([
+      'Python',
+      'SQL',
+      'R Programming',
+      'Data Analysis & EDA',
+      'Data Preprocessing & Feature Engineering',
+      'Biostatistics & Statistical Analysis',
+      'Excel'
+    ])
   },
   'advanced': {
     label: 'AI, ML & GenAI',
     color: '#8b5cf6',
-    skills: new Set(['Machine Learning','Deep Learning','Explainable AI (XAI)',
-      'LLM & Generative AI','RAG (Retrieval-Augmented Generation)','LangChain',
-      'Prompt Engineering','AI Agents (CrewAI, AutoGen)','Knowledge Graphs',
-      'Workflow Automation (n8n)','ETL & Pipelines','Medical Image Analysis',
-      'Data Augmentation','AI / ML Engineering','Cloud Engineering',
-      'Natural Language Processing (NLP)'])
+    skills: new Set([
+      'Machine Learning',
+      'Deep Learning & Neural Networks',
+      'LLMs, RAG & GenAI',
+      'Prompt Engineering',
+      'Natural Language Processing (NLP)',
+      'Medical Image Analysis',
+      'Explainable AI (XAI)',
+      'AI Agents & Workflow Automation',
+      'AI/ML & Cloud Engineering'
+    ])
   },
   'clinical': {
     label: 'Clinical & Health',
     color: '#10b981',
-    skills: new Set(['Clinical Data Management','Healthcare Analytics','Pharmacovigilance',
-      'Clinical Documentation','SAS'])
+    skills: new Set([
+      'Clinical Data Management',
+      'Healthcare & Clinical Analytics',
+      'Clinical Documentation & Reporting',
+      'Pharmacovigilance & Drug Safety',
+      'Clinical SAS'
+    ])
   },
   'domain': {
     label: 'BI & Domain',
     color: '#f59e0b',
-    skills: new Set(['Power BI','Tableau','Looker Studio','Project Management',
-      'Communication & Domain'])
+    skills: new Set([
+      'Power BI & BI Platforms',
+      'Tableau',
+      'Healthcare Project & Operations Management'
+    ])
   }
 };
 
@@ -1029,7 +1127,7 @@ function normalizeSkill(raw){
     }
   }
   if(clean.length < 3 || clean.length > 50) return null;
-  return raw.trim();
+  return null;
 }
 
 function getSkillCategory(skillName){
@@ -1371,33 +1469,43 @@ function renderIndustryList(students){
   const groups = {};
   students.forEach(s=>{
     if(!s.industry_immersion) return;
-    const raw = s.industry_immersion.trim();
-    // extract first line that contains org and maybe role/duration
-    const firstLine = raw.split('\n')[0] || raw;
-    // try to parse organization name (before '(' or '-' or ' - ')
-    let orgName = firstLine.split('(')[0].split('-')[0].split(',')[0].trim();
-    if(!orgName) orgName = firstLine;
-    // Special-case known organization mentions to avoid role-first lines (e.g., "Data Science Intern - Orbiton...")
-    if(/orbiton/i.test(raw)) orgName = 'Orbiton Life Sciences';
-    // normalize key
+    const imm = s.industry_immersion;
+    let orgName, role, duration, raw;
+    if(imm && typeof imm === 'object'){
+      orgName = imm.company || 'Industry Partner';
+      role = imm.role || '';
+      duration = imm.duration || '';
+      raw = [imm.company, imm.role, imm.duration, (imm.projects||[]).join('\n')].filter(Boolean).join('\n');
+    } else {
+      raw = (imm || '').trim();
+      const firstLine = raw.split('\n')[0] || raw;
+      orgName = firstLine.split('(')[0].split('-')[0].split(',')[0].trim();
+      if(!orgName) orgName = firstLine;
+      if(/orbiton/i.test(raw)) orgName = 'Orbiton Life Sciences';
+      let roleMatch = raw.match(/([A-Za-z &]+Intern)/i);
+      role = roleMatch ? roleMatch[1].trim() : '';
+      if(!role){
+        const rm = raw.match(/(Data Science Intern|Data Analyst Intern|Intern)/i);
+        role = rm ? rm[0] : '';
+      }
+      let durationMatch = raw.match(/\(([^)]+)\)/);
+    }
+
+    if(/orbiton/i.test(orgName) || /orbiton/i.test(raw)) orgName = 'Orbiton Life Sciences';
+    else if(/prediscan/i.test(orgName) || /prediscan/i.test(raw)) orgName = 'Prediscan Medtech Pvt. Ltd';
+    else if(/suvij/i.test(orgName) || /suvij/i.test(raw)) orgName = 'Suvij IT Services Pvt. Ltd';
+    else if(/madras diabetes|mdrf/i.test(orgName) || /madras diabetes|mdrf/i.test(raw)) orgName = 'Madras Diabetes Research Foundation';
+    else if(/msmf|mazumdhar/i.test(orgName) || /msmf|mazumdhar/i.test(raw)) orgName = 'Mazumdar Shaw Medical Foundation (MSMF)';
+    else if(/niepmd|ottobock|endolite/i.test(orgName) || /niepmd|ottobock|endolite/i.test(raw)) orgName = 'NIEPMD / Ottobock India / Endolite India';
+
     const key = orgName.toLowerCase().replace(/[^a-z0-9 ]/g,'').trim();
     groups[key] = groups[key] || {org: orgName, interns: []};
-    // find role (look for 'Intern' in the whole field)
-    let roleMatch = raw.match(/([A-Za-z &]+Intern)/i);
-    let role = roleMatch ? roleMatch[1].trim() : '';
-    if(!role){
-      // fallback: if line contains words like 'Data Science Intern' or 'Data Analyst Intern'
-      const rm = raw.match(/(Data Science Intern|Data Analyst Intern|Data Science Intern\b|Intern)/i);
-      role = rm ? rm[0] : '';
-    }
-    // find duration in parentheses or months
-    let durationMatch = raw.match(/\(([^)]+)\)/);
-    let duration = durationMatch ? durationMatch[1].trim() : '';
     // push intern
     groups[key].interns.push({name: s.name, image: s.image, role: role, duration: duration, raw: raw, studentRef: s});
   });
 
   const container = document.getElementById('industry-list');
+  if(!container) return;
   container.innerHTML = '';
   const grid = document.createElement('div');
   grid.className = 'industry-grid';
@@ -1547,26 +1655,62 @@ function setupRevealAnimations(){
 }
 
 (async function init(){
-  try{
-    const students = await loadStudents();
+  function reportStepError(step, err){
+    console.error(`Error in init() at ${step}:`, err);
+    try {
+      fetch('/?init_error=' + encodeURIComponent(`${step}: ${err && (err.stack || err.message || err)}`));
+    } catch(e){}
+  }
+
+  let students = [];
+  try {
+    students = await loadStudents();
     window._totalStudentsCount = students.length;
+  } catch(err){
+    reportStepError('loadStudents', err);
+    const sgrid = document.getElementById('student-grid');
+    if(sgrid) sgrid.innerHTML = '<div class="card" style="grid-column:1/-1;color:#f87171">Failed to load student profiles. (' + (err.message || err) + ')</div>';
+    const grid = document.getElementById('project-grid');
+    if(grid) grid.innerHTML = '<div class="card" style="grid-column:1/-1;color:#f87171">Failed to load projects. (' + (err.message || err) + ')</div>';
+    return;
+  }
+
+  try {
     buildFilters(students);
+  } catch(err){ reportStepError('buildFilters', err); }
+
+  try {
     renderStudentsGrid(students, students.length);
-    const projects = buildProjects(students);
-    // cache projects for pagination
+  } catch(err){
+    reportStepError('renderStudentsGrid', err);
+    const sgrid = document.getElementById('student-grid');
+    if(sgrid) sgrid.innerHTML = '<div class="card" style="grid-column:1/-1;color:#f87171">Error displaying student directory. Check console.</div>';
+  }
+
+  let projects = [];
+  try {
+    projects = buildProjects(students);
     _projectsCache = projects.slice();
     renderProjectPage(projects, 0);
-    renderSkillsMap(students);
-    renderIndustryList(students);
-    bindUI(students, projects);
-    // trigger reveal animations after initial render
-    setupRevealAnimations();
-  }catch(err){
-    console.error('Initialization error:', err);
-    // show friendly message in project area so user sees something
+  } catch(err){
+    reportStepError('buildProjects', err);
     const grid = document.getElementById('project-grid');
-    if(grid) grid.innerHTML = '<div class="card">Error loading data. Check console for details.</div>';
-    const sgrid = document.getElementById('student-grid');
-    if(sgrid) sgrid.innerHTML = '<div class="card">Error loading students. Check console for details.</div>';
+    if(grid) grid.innerHTML = '<div class="card" style="grid-column:1/-1;color:#f87171">Error displaying project showcase. Check console.</div>';
   }
+
+  try {
+    renderSkillsMap(students);
+  } catch(err){ reportStepError('renderSkillsMap', err); }
+
+  try {
+    renderIndustryList(students);
+  } catch(err){ reportStepError('renderIndustryList', err); }
+
+  try {
+    bindUI(students, projects);
+  } catch(err){ reportStepError('bindUI', err); }
+
+  try {
+    setupRevealAnimations();
+  } catch(err){ reportStepError('setupRevealAnimations', err); }
 })();
